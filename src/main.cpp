@@ -1,4 +1,5 @@
 #include "voltdbx/config.hpp"
+#include "voltdbx/server.hpp"
 
 #include <iostream>
 #include <string>
@@ -26,7 +27,6 @@ int main(int argc, char** argv) {
             cfg.port = static_cast<std::uint16_t>(std::atoi(argv[++i]));
         }
     }
-    std::cout << "VoltDBX listening on " << cfg.host << ":" << cfg.port << "\n";
-    std::cout << "data_dir=" << cfg.data_dir << " max_clients=" << cfg.max_clients << "\n";
-    return 0;
+    voltdbx::DatabaseServer server(cfg);
+    return server.run();
 }
