@@ -12,6 +12,8 @@ set(VOLTDBX_SOURCES
     src/config.cpp
     src/server/database_server.cpp
     src/net/tcp_server.cpp
+    src/net/client_session.cpp
+    src/net/accept_loop.cpp
     src/util/logger.cpp
     src/storage/storage_engine.cpp
     src/protocol/parser.cpp
