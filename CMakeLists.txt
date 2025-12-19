@@ -17,6 +17,8 @@ set(VOLTDBX_SOURCES
     src/util/logger.cpp
     src/storage/storage_engine.cpp
     src/protocol/parser.cpp
+    src/protocol/command.cpp
+    src/protocol/dispatcher.cpp
 )
 
 add_executable(voltdbx ${VOLTDBX_SOURCES})
