@@ -20,6 +20,7 @@ set(VOLTDBX_SOURCES
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
+    src/protocol/response.cpp
 )
 
 add_executable(voltdbx ${VOLTDBX_SOURCES})
