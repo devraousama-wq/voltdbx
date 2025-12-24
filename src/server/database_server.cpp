@@ -1,11 +1,14 @@
 #include "voltdbx/server.hpp"
+#include "voltdbx/net/accept_loop.hpp"
 #include "voltdbx/net/tcp_server.hpp"
+#include "voltdbx/server/command_handler.hpp"
 #include "voltdbx/util/logger.hpp"
 
 namespace voltdbx {
 
 DatabaseServer::DatabaseServer(ServerConfig config)
-    : config_(std::move(config)) {}
+    : config_(std::move(config)),
+      dispatcher_(std::make_unique<CommandDispatcher>(storage_)) {}
 
 int DatabaseServer::run() {
     net::TcpServer tcp(config_.host, config_.port);
@@ -18,13 +21,10 @@ int DatabaseServer::run() {
     }
     util::log_info("TCP server bound, starting accept loop");
     net::AcceptLoop accept_loop(tcp);
-    accept_loop.set_handler([](std::unique_ptr<net::ClientSession> session) {
-        session->write_line("+OK connected");
-        std::string line = session->read_line();
-        if (!line.empty()) {
-            session->write_line("+PONG " + line);
-        }
-        session->mark_closed();
+    CommandHandler commands(storage_, *dispatcher_);
+    accept_loop.set_handler([&commands](std::unique_ptr<net::ClientSession> session) {
+        session->write_line("+OK voltdbx ready");
+        commands.handle_session(*session);
     });
     accept_loop.run_until_stopped();
     util::log_info("server stopped cleanly");

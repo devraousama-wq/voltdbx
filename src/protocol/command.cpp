@@ -1,0 +1,33 @@
+#include "voltdbx/protocol/command.hpp"
+
+#include <algorithm>
+#include <cctype>
+
+namespace voltdbx {
+
+namespace {
+
+std::string upper(std::string_view s) {
+    std::string out(s);
+    std::transform(out.begin(), out.end(), out.begin(),
+                   [](unsigned char c) { return static_cast<char>(std::toupper(c)); });
+    return out;
+}
+
+}
+
+CommandType command_type_from_name(std::string_view name) {
+    const std::string key = upper(name);
+    if (key == "PING") return CommandType::Ping;
+    if (key == "GET") return CommandType::Get;
+    if (key == "SET") return CommandType::Set;
+    if (key == "DEL" || key == "DELETE") return CommandType::Delete;
+    if (key == "EXISTS") return CommandType::Exists;
+    if (key == "EXPIRE") return CommandType::Expire;
+    if (key == "SUBSCRIBE") return CommandType::Subscribe;
+    if (key == "PUBLISH") return CommandType::Publish;
+    if (key == "INFO") return CommandType::Info;
+    return CommandType::Unknown;
+}
+
+}

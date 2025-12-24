@@ -11,12 +11,16 @@ set(VOLTDBX_SOURCES
     src/main.cpp
     src/config.cpp
     src/server/database_server.cpp
+    src/server/command_handler.cpp
     src/net/tcp_server.cpp
     src/net/client_session.cpp
     src/net/accept_loop.cpp
     src/util/logger.cpp
     src/storage/storage_engine.cpp
     src/protocol/parser.cpp
+    src/protocol/command.cpp
+    src/protocol/dispatcher.cpp
+    src/protocol/response.cpp
 )
 
 add_executable(voltdbx ${VOLTDBX_SOURCES})
