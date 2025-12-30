@@ -1,5 +1,7 @@
 #include "voltdbx/storage.hpp"
 
+#include "voltdbx/memory/buffer_pool.hpp"
+#include "voltdbx/memory/string_pool.hpp"
 #include "voltdbx/storage/entry.hpp"
 #include "voltdbx/storage/hash_table.hpp"
 
@@ -7,6 +9,8 @@ namespace voltdbx {
 
 class StorageEngine::Impl {
 public:
+    memory::BufferPool buffer_pool{512, 256};
+    memory::StringPool string_pool{buffer_pool};
     HashTable table;
 };
 
