@@ -1,6 +1,8 @@
 #include "voltdbx/server.hpp"
 #include "voltdbx/net/accept_loop.hpp"
 #include "voltdbx/net/tcp_server.hpp"
+#include "voltdbx/persistence/snapshot.hpp"
+#include "voltdbx/persistence/snapshot_scheduler.hpp"
 #include "voltdbx/server/command_handler.hpp"
 #include "voltdbx/util/logger.hpp"
 
