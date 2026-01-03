@@ -19,8 +19,8 @@ StorageEngine::~StorageEngine() = default;
 
 bool StorageEngine::set(std::string_view key, std::string_view value) {
     StorageEntry entry;
-    entry.value = std::string(value);
-    impl_->table.insert(std::string(key), std::move(entry));
+    entry.value = impl_->string_pool.copy(value);
+    impl_->table.insert(impl_->string_pool.copy(key), std::move(entry));
     return true;
 }
 

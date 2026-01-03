@@ -18,6 +18,8 @@ set(VOLTDBX_SOURCES
     src/util/logger.cpp
     src/storage/storage_engine.cpp
     src/storage/hash_table.cpp
+    src/memory/buffer_pool.cpp
+    src/memory/string_pool.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
