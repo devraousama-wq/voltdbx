@@ -10,6 +10,7 @@ namespace voltdbx {
 
 DatabaseServer::DatabaseServer(ServerConfig config)
     : config_(std::move(config)),
+      aof_(config_.data_dir),
       dispatcher_(std::make_unique<CommandDispatcher>(storage_)) {}
 
 int DatabaseServer::run() {
@@ -17,8 +18,17 @@ int DatabaseServer::run() {
     tcp.install_signal_handlers(
         [](int) { util::log_info("received SIGINT, shutting down"); },
         [](int) { util::log_info("received SIGTERM, shutting down"); });
+    persistence::SnapshotLoader loader(config_.data_dir);
+    if (loader.has_snapshot()) {
+        loader.load_into(storage_);
+        util::log_info("restored data from snapshot");
+    }
+    persistence::SnapshotWriter writer(config_.data_dir);
+    persistence::SnapshotScheduler snapshots(storage_, writer, config_.snapshot_interval_sec);
+    snapshots.start();
     if (!tcp.bind_and_listen()) {
         util::log_error("failed to start TCP listener");
+        snapshots.stop();
         return 1;
     }
     util::log_info("TCP server bound, starting accept loop");
@@ -29,6 +39,8 @@ int DatabaseServer::run() {
         commands.handle_session(*session);
     });
     accept_loop.run_until_stopped();
+    snapshots.stop();
+    writer.write(storage_);
     util::log_info("server stopped cleanly");
     return 0;
 }

@@ -16,8 +16,12 @@ bool SnapshotWriter::write(const StorageEngine& storage) {
     if (!out) {
         return false;
     }
+    const auto pairs = storage.dump_entries();
     out << "VOLTDBX_SNAPSHOT_V1\n";
-    out << storage.entry_count() << "\n";
+    out << pairs.size() << "\n";
+    for (const auto& pair : pairs) {
+        out << pair.first << "\n" << pair.second << "\n";
+    }
     return out.good();
 }
 

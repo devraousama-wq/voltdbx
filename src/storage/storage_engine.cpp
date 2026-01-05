@@ -44,4 +44,12 @@ std::size_t StorageEngine::entry_count() const {
     return impl_->table.size();
 }
 
+std::vector<std::pair<std::string, std::string>> StorageEngine::dump_entries() const {
+    std::vector<std::pair<std::string, std::string>> pairs;
+    impl_->table.for_each([&pairs](const std::string& key, const StorageEntry& entry) {
+        pairs.emplace_back(key, entry.value);
+    });
+    return pairs;
+}
+
 }
