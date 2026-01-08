@@ -25,6 +25,9 @@ bool StorageEngine::set(std::string_view key, std::string_view value) {
 }
 
 std::optional<std::string> StorageEngine::get(std::string_view key) const {
+    if (is_expired(key)) {
+        return std::nullopt;
+    }
     auto found = impl_->table.find(key);
     if (!found) {
         return std::nullopt;
@@ -42,6 +45,58 @@ bool StorageEngine::exists(std::string_view key) const {
 
 std::size_t StorageEngine::entry_count() const {
     return impl_->table.size();
+}
+
+bool StorageEngine::set_ttl(std::string_view key, std::chrono::seconds ttl) {
+    auto found = impl_->table.find(key);
+    if (!found) {
+        return false;
+    }
+    StorageEntry entry = *found;
+    entry.expires_at = std::chrono::steady_clock::now() + ttl;
+    impl_->table.insert(std::string(key), std::move(entry));
+    return true;
+}
+
+bool StorageEngine::is_expired(std::string_view key) const {
+    auto found = impl_->table.find(key);
+    if (!found || !found->expires_at) {
+        return false;
+    }
+    return std::chrono::steady_clock::now() >= *found->expires_at;
+}
+
+void StorageEngine::touch(std::string_view key) {
+    auto found = impl_->table.find(key);
+    if (!found || !found->expires_at) {
+        return;
+    }
+    StorageEntry entry = *found;
+    const auto remaining = *found->expires_at - std::chrono::steady_clock::now();
+    entry.expires_at = std::chrono::steady_clock::now() + remaining;
+    impl_->table.insert(std::string(key), std::move(entry));
+}
+
+std::size_t StorageEngine::ttl_key_count() const {
+    std::size_t count = 0;
+    impl_->table.for_each([&count](const std::string&, const StorageEntry& entry) {
+        if (entry.expires_at) {
+            ++count;
+        }
+    });
+    return count;
+}
+
+void StorageEngine::purge_expired() {
+    std::vector<std::string> expired;
+    impl_->table.for_each([&](const std::string& key, const StorageEntry& entry) {
+        if (entry.expires_at && std::chrono::steady_clock::now() >= *entry.expires_at) {
+            expired.push_back(key);
+        }
+    });
+    for (const auto& key : expired) {
+        impl_->table.erase(key);
+    }
 }
 
 std::vector<std::pair<std::string, std::string>> StorageEngine::dump_entries() const {

@@ -22,6 +22,9 @@ int DatabaseServer::run() {
     if (loader.has_snapshot()) {
         loader.load_into(storage_);
         util::log_info("restored data from snapshot");
+    } else {
+        aof_.replay(storage_);
+        util::log_info("replayed append-only log");
     }
     persistence::SnapshotWriter writer(config_.data_dir);
     persistence::SnapshotScheduler snapshots(storage_, writer, config_.snapshot_interval_sec);

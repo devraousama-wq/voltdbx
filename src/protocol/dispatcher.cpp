@@ -43,6 +43,16 @@ void CommandDispatcher::register_builtin_handlers() {
         }
         return integer_response(count);
     };
+    handlers_[CommandType::Expire] = [this](const ParsedCommand& cmd) {
+        if (cmd.args.size() != 2) {
+            return err_response("wrong number of arguments for EXPIRE");
+        }
+        const long long seconds = std::stoll(cmd.args[1]);
+        if (!storage_.set_ttl(cmd.args[0], std::chrono::seconds(seconds))) {
+            return integer_response(0);
+        }
+        return integer_response(1);
+    };
     handlers_[CommandType::Set] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() < 2) {
             return err_response("wrong number of arguments for SET");
