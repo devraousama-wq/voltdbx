@@ -2,6 +2,8 @@
 #include "voltdbx/net/accept_loop.hpp"
 #include "voltdbx/net/tcp_server.hpp"
 #include "voltdbx/persistence/snapshot.hpp"
+#include "voltdbx/ttl/expiration.hpp"
+#include "voltdbx/ttl/scheduler.hpp"
 #include "voltdbx/persistence/snapshot_scheduler.hpp"
 #include "voltdbx/server/command_handler.hpp"
 #include "voltdbx/util/logger.hpp"
@@ -10,6 +12,7 @@ namespace voltdbx {
 
 DatabaseServer::DatabaseServer(ServerConfig config)
     : config_(std::move(config)),
+      aof_(config_.data_dir),
       dispatcher_(std::make_unique<CommandDispatcher>(storage_)) {}
 
 int DatabaseServer::run() {
@@ -17,8 +20,20 @@ int DatabaseServer::run() {
     tcp.install_signal_handlers(
         [](int) { util::log_info("received SIGINT, shutting down"); },
         [](int) { util::log_info("received SIGTERM, shutting down"); });
+    persistence::SnapshotLoader loader(config_.data_dir);
+    if (loader.has_snapshot()) {
+        loader.load_into(storage_);
+        util::log_info("restored data from snapshot");
+    } else {
+        aof_.replay(storage_);
+        util::log_info("replayed append-only log");
+    }
+    persistence::SnapshotWriter writer(config_.data_dir);
+    persistence::SnapshotScheduler snapshots(storage_, writer, config_.snapshot_interval_sec);
+    snapshots.start();
     if (!tcp.bind_and_listen()) {
         util::log_error("failed to start TCP listener");
+        snapshots.stop();
         return 1;
     }
     util::log_info("TCP server bound, starting accept loop");
@@ -29,6 +44,8 @@ int DatabaseServer::run() {
         commands.handle_session(*session);
     });
     accept_loop.run_until_stopped();
+    snapshots.stop();
+    writer.write(storage_);
     util::log_info("server stopped cleanly");
     return 0;
 }

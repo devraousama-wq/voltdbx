@@ -20,6 +20,11 @@ set(VOLTDBX_SOURCES
     src/storage/hash_table.cpp
     src/memory/buffer_pool.cpp
     src/memory/string_pool.cpp
+    src/persistence/snapshot.cpp
+    src/persistence/snapshot_scheduler.cpp
+    src/persistence/aof_log.cpp
+    src/storage/storage_hooks.cpp
+    src/ttl/expiration.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
