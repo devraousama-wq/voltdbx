@@ -1,6 +1,8 @@
 #include "voltdbx/protocol/dispatcher.hpp"
 #include "voltdbx/protocol/response.hpp"
 
+#include <chrono>
+
 namespace voltdbx {
 
 CommandDispatcher::CommandDispatcher(StorageEngine& storage) : storage_(storage) {

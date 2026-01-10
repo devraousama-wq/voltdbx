@@ -24,6 +24,7 @@ set(VOLTDBX_SOURCES
     src/persistence/snapshot_scheduler.cpp
     src/persistence/aof_log.cpp
     src/storage/storage_hooks.cpp
+    src/ttl/expiration.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
