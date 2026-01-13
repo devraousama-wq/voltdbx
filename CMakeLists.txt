@@ -25,6 +25,9 @@ set(VOLTDBX_SOURCES
     src/persistence/aof_log.cpp
     src/storage/storage_hooks.cpp
     src/ttl/expiration.cpp
+    src/ttl/scheduler.cpp
+    src/pubsub/channel_registry.cpp
+    src/pubsub/broker.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
