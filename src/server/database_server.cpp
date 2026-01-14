@@ -13,7 +13,8 @@ namespace voltdbx {
 DatabaseServer::DatabaseServer(ServerConfig config)
     : config_(std::move(config)),
       aof_(config_.data_dir),
-      dispatcher_(std::make_unique<CommandDispatcher>(storage_)) {}
+      broker_(channels_),
+      dispatcher_(std::make_unique<CommandDispatcher>(storage_, broker_)) {}
 
 int DatabaseServer::run() {
     net::TcpServer tcp(config_.host, config_.port);
@@ -30,9 +31,13 @@ int DatabaseServer::run() {
     }
     persistence::SnapshotWriter writer(config_.data_dir);
     persistence::SnapshotScheduler snapshots(storage_, writer, config_.snapshot_interval_sec);
+    ttl::ExpirationService expiration(storage_);
+    ttl::ExpirationScheduler ttl_scheduler(storage_, expiration, std::chrono::milliseconds(500));
     snapshots.start();
+    ttl_scheduler.start();
     if (!tcp.bind_and_listen()) {
         util::log_error("failed to start TCP listener");
+        ttl_scheduler.stop();
         snapshots.stop();
         return 1;
     }
@@ -44,6 +49,7 @@ int DatabaseServer::run() {
         commands.handle_session(*session);
     });
     accept_loop.run_until_stopped();
+    ttl_scheduler.stop();
     snapshots.stop();
     writer.write(storage_);
     util::log_info("server stopped cleanly");
