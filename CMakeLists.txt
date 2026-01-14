@@ -28,6 +28,7 @@ set(VOLTDBX_SOURCES
     src/ttl/scheduler.cpp
     src/pubsub/channel_registry.cpp
     src/pubsub/broker.cpp
+    src/pubsub/session_mailbox.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp

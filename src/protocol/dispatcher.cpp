@@ -5,7 +5,8 @@
 
 namespace voltdbx {
 
-CommandDispatcher::CommandDispatcher(StorageEngine& storage) : storage_(storage) {
+CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker)
+    : storage_(storage), broker_(broker) {
     register_builtin_handlers();
 }
 
@@ -44,6 +45,25 @@ void CommandDispatcher::register_builtin_handlers() {
             }
         }
         return integer_response(count);
+    };
+    handlers_[CommandType::Subscribe] = [this](const ParsedCommand& cmd) {
+        if (cmd.args.size() != 1) {
+            return err_response("wrong number of arguments for SUBSCRIBE");
+        }
+        broker_.register_subscriber(1, cmd.args[0]);
+        return ok_response() + " subscribed " + cmd.args[0];
+    };
+    handlers_[CommandType::Publish] = [this](const ParsedCommand& cmd) {
+        if (cmd.args.size() < 2) {
+            return err_response("wrong number of arguments for PUBLISH");
+        }
+        std::string message = cmd.args[1];
+        for (std::size_t i = 2; i < cmd.args.size(); ++i) {
+            message.push_back(' ');
+            message += cmd.args[i];
+        }
+        const std::size_t delivered = broker_.publish(cmd.args[0], message);
+        return integer_response(static_cast<long long>(delivered));
     };
     handlers_[CommandType::Expire] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() != 2) {
