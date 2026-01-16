@@ -29,6 +29,8 @@ set(VOLTDBX_SOURCES
     src/pubsub/channel_registry.cpp
     src/pubsub/broker.cpp
     src/pubsub/session_mailbox.cpp
+    src/concurrency/thread_pool.cpp
+    src/concurrency/session_worker.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp

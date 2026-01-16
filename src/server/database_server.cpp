@@ -5,6 +5,8 @@
 #include "voltdbx/ttl/expiration.hpp"
 #include "voltdbx/ttl/scheduler.hpp"
 #include "voltdbx/persistence/snapshot_scheduler.hpp"
+#include "voltdbx/concurrency/session_worker.hpp"
+#include "voltdbx/concurrency/thread_pool.hpp"
 #include "voltdbx/server/command_handler.hpp"
 #include "voltdbx/util/logger.hpp"
 
@@ -44,11 +46,13 @@ int DatabaseServer::run() {
     util::log_info("TCP server bound, starting accept loop");
     net::AcceptLoop accept_loop(tcp);
     CommandHandler commands(storage_, *dispatcher_);
-    accept_loop.set_handler([&commands](std::unique_ptr<net::ClientSession> session) {
-        session->write_line("+OK voltdbx ready");
-        commands.handle_session(*session);
+    concurrency::ThreadPool pool(4);
+    concurrency::SessionWorker workers(pool, commands);
+    accept_loop.set_handler([&workers](std::unique_ptr<net::ClientSession> session) {
+        workers.dispatch(std::move(session));
     });
     accept_loop.run_until_stopped();
+    pool.shutdown();
     ttl_scheduler.stop();
     snapshots.stop();
     writer.write(storage_);
