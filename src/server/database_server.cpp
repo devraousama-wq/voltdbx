@@ -1,5 +1,5 @@
 #include "voltdbx/server.hpp"
-#include "voltdbx/net/accept_loop.hpp"
+#include "voltdbx/net/async_accept_loop.hpp"
 #include "voltdbx/net/tcp_server.hpp"
 #include "voltdbx/persistence/snapshot.hpp"
 #include "voltdbx/ttl/expiration.hpp"
@@ -44,7 +44,7 @@ int DatabaseServer::run() {
         return 1;
     }
     util::log_info("TCP server bound, starting accept loop");
-    net::AcceptLoop accept_loop(tcp);
+    net::AsyncAcceptLoop accept_loop(tcp);
     CommandHandler commands(storage_, *dispatcher_);
     concurrency::ThreadPool pool(4);
     concurrency::SessionWorker workers(pool, commands);

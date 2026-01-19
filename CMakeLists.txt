@@ -15,6 +15,8 @@ set(VOLTDBX_SOURCES
     src/net/tcp_server.cpp
     src/net/client_session.cpp
     src/net/accept_loop.cpp
+    src/net/io_multiplexer.cpp
+    src/net/async_accept_loop.cpp
     src/util/logger.cpp
     src/storage/storage_engine.cpp
     src/storage/hash_table.cpp

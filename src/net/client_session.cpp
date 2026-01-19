@@ -1,5 +1,6 @@
 #include "voltdbx/net/client_session.hpp"
 
+#include <fcntl.h>
 #include <unistd.h>
 
 #include <cstring>
@@ -18,7 +19,12 @@ std::uint64_t ClientSession::next_id() {
 }
 
 ClientSession::ClientSession(int fd, std::string peer_addr)
-    : fd_(fd), peer_addr_(std::move(peer_addr)), id_(next_id()) {}
+    : fd_(fd), peer_addr_(std::move(peer_addr)), id_(next_id()) {
+    int flags = fcntl(fd_, F_GETFL, 0);
+    if (flags >= 0) {
+        fcntl(fd_, F_SETFL, flags | O_NONBLOCK);
+    }
+}
 
 ClientSession::~ClientSession() {
     mark_closed();
