@@ -1,5 +1,6 @@
 #include "voltdbx/server.hpp"
 #include "voltdbx/net/async_accept_loop.hpp"
+#include "voltdbx/net/connection_pool.hpp"
 #include "voltdbx/net/tcp_server.hpp"
 #include "voltdbx/persistence/snapshot.hpp"
 #include "voltdbx/ttl/expiration.hpp"
@@ -44,12 +45,19 @@ int DatabaseServer::run() {
         return 1;
     }
     util::log_info("TCP server bound, starting accept loop");
+    net::ConnectionPool connections(config_.max_clients, std::chrono::seconds(120));
     net::AsyncAcceptLoop accept_loop(tcp);
     CommandHandler commands(storage_, *dispatcher_);
     concurrency::ThreadPool pool(4);
     concurrency::SessionWorker workers(pool, commands);
-    accept_loop.set_handler([&workers](std::unique_ptr<net::ClientSession> session) {
+    accept_loop.set_handler([&workers, &connections](std::unique_ptr<net::ClientSession> session) {
+        if (!connections.admit()) {
+            session->write_line("-ERR max clients reached");
+            session->mark_closed();
+            return;
+        }
         workers.dispatch(std::move(session));
+        connections.release();
     });
     accept_loop.run_until_stopped();
     pool.shutdown();
