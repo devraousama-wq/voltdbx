@@ -15,6 +15,9 @@ set(VOLTDBX_SOURCES
     src/net/tcp_server.cpp
     src/net/client_session.cpp
     src/net/accept_loop.cpp
+    src/net/io_multiplexer.cpp
+    src/net/async_accept_loop.cpp
+    src/net/connection_pool.cpp
     src/util/logger.cpp
     src/storage/storage_engine.cpp
     src/storage/hash_table.cpp
@@ -29,6 +32,8 @@ set(VOLTDBX_SOURCES
     src/pubsub/channel_registry.cpp
     src/pubsub/broker.cpp
     src/pubsub/session_mailbox.cpp
+    src/concurrency/thread_pool.cpp
+    src/concurrency/session_worker.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
