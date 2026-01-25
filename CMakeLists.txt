@@ -48,4 +48,14 @@ if(VOLTDBX_BUILD_TESTS)
     enable_testing()
 endif()
 
-install(TARGETS voltdbx RUNTIME DESTINATION bin)
+add_executable(voltdbx-bench
+    src/bench/main.cpp
+    src/bench/latency_runner.cpp
+    src/storage/storage_engine.cpp
+    src/storage/hash_table.cpp
+    src/memory/buffer_pool.cpp
+    src/memory/string_pool.cpp
+)
+target_include_directories(voltdbx-bench PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+install(TARGETS voltdbx voltdbx-bench RUNTIME DESTINATION bin)
