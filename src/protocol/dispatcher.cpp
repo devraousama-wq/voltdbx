@@ -5,8 +5,9 @@
 
 namespace voltdbx {
 
-CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker)
-    : storage_(storage), broker_(broker) {
+CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker,
+                                     monitor::MetricsCollector& metrics)
+    : storage_(storage), broker_(broker), metrics_(metrics) {
     register_builtin_handlers();
 }
 

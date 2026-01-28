@@ -34,6 +34,7 @@ set(VOLTDBX_SOURCES
     src/pubsub/session_mailbox.cpp
     src/concurrency/thread_pool.cpp
     src/concurrency/session_worker.cpp
+    src/monitor/metrics.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
