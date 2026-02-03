@@ -23,6 +23,7 @@ set(VOLTDBX_SOURCES
     src/storage/hash_table.cpp
     src/memory/buffer_pool.cpp
     src/memory/string_pool.cpp
+    src/memory/arena_allocator.cpp
     src/persistence/snapshot.cpp
     src/persistence/snapshot_scheduler.cpp
     src/persistence/aof_log.cpp
@@ -56,6 +57,7 @@ add_executable(voltdbx-bench
     src/storage/hash_table.cpp
     src/memory/buffer_pool.cpp
     src/memory/string_pool.cpp
+    src/memory/arena_allocator.cpp
 )
 target_include_directories(voltdbx-bench PRIVATE ${CMAKE_SOURCE_DIR}/include)
 

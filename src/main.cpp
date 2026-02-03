@@ -17,14 +17,22 @@ int main(int argc, char** argv) {
     voltdbx::ServerConfig cfg = voltdbx::load_config_from_env();
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "--health" || arg == "-h") {
+        if (arg == "--health") {
             print_health();
+            return 0;
+        }
+        if (arg == "--help") {
+            std::cout << "Usage: voltdbx [--host H] [--port P] [--data-dir D] [--health]\n";
             return 0;
         }
         if (arg == "--host" && i + 1 < argc) {
             cfg.host = argv[++i];
         } else if (arg == "--port" && i + 1 < argc) {
             cfg.port = static_cast<std::uint16_t>(std::atoi(argv[++i]));
+        } else if (arg == "--data-dir" && i + 1 < argc) {
+            cfg.data_dir = argv[++i];
+        } else if (arg == "--max-clients" && i + 1 < argc) {
+            cfg.max_clients = static_cast<std::size_t>(std::atol(argv[++i]));
         }
     }
     voltdbx::DatabaseServer server(cfg);

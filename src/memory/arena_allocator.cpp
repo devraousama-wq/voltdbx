@@ -1,5 +1,6 @@
 #include "voltdbx/memory/arena_allocator.hpp"
 
+#include <algorithm>
 #include <cstring>
 
 namespace voltdbx::memory {

@@ -50,14 +50,18 @@ int DatabaseServer::run() {
     CommandHandler commands(storage_, *dispatcher_);
     concurrency::ThreadPool pool(4);
     concurrency::SessionWorker workers(pool, commands);
-    accept_loop.set_handler([&workers, &connections](std::unique_ptr<net::ClientSession> session) {
+    accept_loop.set_handler([&workers, &connections, this](std::unique_ptr<net::ClientSession> session) {
         if (!connections.admit()) {
             session->write_line("-ERR max clients reached");
             session->mark_closed();
             return;
         }
+        metrics_.set_active_clients(connections.stats().active + 1);
         workers.dispatch(std::move(session));
         connections.release();
+        metrics_.set_active_clients(connections.stats().active);
+        metrics_.set_keys_stored(storage_.entry_count());
+        metrics_.set_memory_bytes(storage_.entry_count() * 128);
     });
     accept_loop.run_until_stopped();
     pool.shutdown();
