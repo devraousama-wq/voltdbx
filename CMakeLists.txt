@@ -23,6 +23,7 @@ set(VOLTDBX_SOURCES
     src/storage/hash_table.cpp
     src/memory/buffer_pool.cpp
     src/memory/string_pool.cpp
+    src/memory/arena_allocator.cpp
     src/persistence/snapshot.cpp
     src/persistence/snapshot_scheduler.cpp
     src/persistence/aof_log.cpp
@@ -34,6 +35,7 @@ set(VOLTDBX_SOURCES
     src/pubsub/session_mailbox.cpp
     src/concurrency/thread_pool.cpp
     src/concurrency/session_worker.cpp
+    src/monitor/metrics.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
@@ -48,4 +50,15 @@ if(VOLTDBX_BUILD_TESTS)
     enable_testing()
 endif()
 
-install(TARGETS voltdbx RUNTIME DESTINATION bin)
+add_executable(voltdbx-bench
+    src/bench/main.cpp
+    src/bench/latency_runner.cpp
+    src/storage/storage_engine.cpp
+    src/storage/hash_table.cpp
+    src/memory/buffer_pool.cpp
+    src/memory/string_pool.cpp
+    src/memory/arena_allocator.cpp
+)
+target_include_directories(voltdbx-bench PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+install(TARGETS voltdbx voltdbx-bench RUNTIME DESTINATION bin)

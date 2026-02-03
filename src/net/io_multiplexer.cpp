@@ -3,6 +3,7 @@
 #if defined(__APPLE__)
 #include <sys/event.h>
 #include <sys/types.h>
+#include <unistd.h>
 #else
 #include <sys/epoll.h>
 #include <unistd.h>
@@ -20,9 +21,7 @@ IoMultiplexer::IoMultiplexer() {
 
 IoMultiplexer::~IoMultiplexer() {
     if (poll_fd_ >= 0) {
-#if !defined(__APPLE__)
-        close(poll_fd_);
-#endif
+        ::close(poll_fd_);
         poll_fd_ = -1;
     }
 }

@@ -5,8 +5,9 @@
 
 namespace voltdbx {
 
-CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker)
-    : storage_(storage), broker_(broker) {
+CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker,
+                                     monitor::MetricsCollector& metrics)
+    : storage_(storage), broker_(broker), metrics_(metrics) {
     register_builtin_handlers();
 }
 
@@ -14,8 +15,9 @@ void CommandDispatcher::register_builtin_handlers() {
     handlers_[CommandType::Ping] = [](const ParsedCommand&) {
         return "+PONG";
     };
-    handlers_[CommandType::Info] = [](const ParsedCommand&) {
-        return ok_response() + " voltdbx/0.1";
+    handlers_[CommandType::Info] = [this](const ParsedCommand&) {
+        metrics_.set_keys_stored(storage_.entry_count());
+        return metrics_.render_info();
     };
     handlers_[CommandType::Get] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() != 1) {
@@ -94,6 +96,7 @@ std::string CommandDispatcher::dispatch(const ParsedCommand& cmd) {
     if (it == handlers_.end()) {
         return "-ERR unknown command";
     }
+    metrics_.record_command();
     return it->second(cmd);
 }
 

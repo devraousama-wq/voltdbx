@@ -9,6 +9,7 @@ namespace voltdbx {
 
 class StorageEngine::Impl {
 public:
+    memory::ArenaAllocator arena{8192};
     memory::BufferPool buffer_pool{512, 256};
     memory::StringPool string_pool{buffer_pool};
     HashTable table;

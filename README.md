@@ -5,17 +5,18 @@ High-performance in-memory database server inspired by Redis, built with modern 
 ## Features
 
 - TCP command server with concurrent client handling
-- Key-value commands: GET, SET, DELETE, EXISTS
-- In-memory hash storage with memory pooling
+- Key-value commands: GET, SET, DELETE, EXISTS, EXPIRE
+- In-memory hash storage with memory pooling and arena allocation
 - Disk snapshots and append-only recovery log
-- TTL expiration with lazy and active cleanup
+- TTL expiration with lazy delete and background sweep
 - Pub/Sub channels with fan-out delivery
-- Built-in benchmarks and runtime monitoring
+- kqueue/epoll accept loop with non-blocking I/O
+- Built-in benchmarks and runtime INFO metrics
 
 ## Requirements
 
 - CMake 3.16+
-- C++17 compiler (GCC 9+, Clang 10+, MSVC 2019+)
+- C++17 compiler (GCC 9+, Clang 10+)
 - POSIX sockets (Linux, macOS)
 
 ## Build
@@ -26,21 +27,42 @@ cmake ..
 cmake --build .
 ```
 
-## Run
+## Run server
 
 ```bash
-./voltdbx --host 127.0.0.1 --port 6379
+./voltdbx --host 127.0.0.1 --port 6379 --data-dir ./data
 ```
 
-Copy `.env.example` to `.env` to override defaults.
+Environment variables from `.env.example` override defaults when exported.
 
-## Protocol
+## Run benchmarks
 
-Line-oriented text protocol over TCP. Example:
+```bash
+./voltdbx-bench
+```
+
+## Protocol examples
 
 ```
-SET mykey hello
-GET mykey
+SET session:42 active
+GET session:42
+EXISTS session:42
+EXPIRE session:42 60
+SUBSCRIBE alerts
+PUBLISH alerts disk-full
+INFO
+```
+
+## Project layout
+
+```
+include/voltdbx/   public headers
+src/net/           sockets, accept loop, connection pool
+src/storage/       hash table engine
+src/persistence/   snapshots and AOF
+src/pubsub/        channel broker
+src/concurrency/   worker thread pool
+src/bench/         latency harness
 ```
 
 ## License
