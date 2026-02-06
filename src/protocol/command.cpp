@@ -27,6 +27,8 @@ CommandType command_type_from_name(std::string_view name) {
     if (key == "SUBSCRIBE") return CommandType::Subscribe;
     if (key == "PUBLISH") return CommandType::Publish;
     if (key == "INFO") return CommandType::Info;
+    if (key == "MGET") return CommandType::Mget;
+    if (key == "MSET") return CommandType::Mset;
     return CommandType::Unknown;
 }
 
