@@ -1,4 +1,5 @@
 #include "voltdbx/protocol/dispatcher.hpp"
+#include "voltdbx/protocol/batch_handler.hpp"
 #include "voltdbx/protocol/response.hpp"
 
 #include <chrono>
@@ -7,7 +8,7 @@ namespace voltdbx {
 
 CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker,
                                      monitor::MetricsCollector& metrics)
-    : storage_(storage), broker_(broker), metrics_(metrics) {
+    : storage_(storage), batch_(storage), broker_(broker), metrics_(metrics) {
     register_builtin_handlers();
 }
 
@@ -76,6 +77,12 @@ void CommandDispatcher::register_builtin_handlers() {
             return integer_response(0);
         }
         return integer_response(1);
+    };
+    handlers_[CommandType::Mget] = [this](const ParsedCommand& cmd) {
+        return handle_mget(cmd, batch_);
+    };
+    handlers_[CommandType::Mset] = [this](const ParsedCommand& cmd) {
+        return handle_mset(cmd, batch_);
     };
     handlers_[CommandType::Set] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() < 2) {
