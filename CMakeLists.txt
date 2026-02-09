@@ -22,6 +22,7 @@ set(VOLTDBX_SOURCES
     src/storage/storage_engine.cpp
     src/storage/hash_table.cpp
     src/storage/batch_ops.cpp
+    src/storage/counter_store.cpp
     src/memory/buffer_pool.cpp
     src/memory/string_pool.cpp
     src/memory/arena_allocator.cpp
@@ -41,6 +42,7 @@ set(VOLTDBX_SOURCES
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
     src/protocol/batch_handler.cpp
+    src/protocol/counter_handler.cpp
     src/protocol/response.cpp
 )
 

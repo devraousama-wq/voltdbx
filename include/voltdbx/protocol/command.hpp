@@ -18,7 +18,10 @@ enum class CommandType {
     Publish,
     Info,
     Mget,
-    Mset
+    Mset,
+    Incr,
+    Decr,
+    Incrby
 };
 
 struct ParsedCommand {

@@ -4,6 +4,7 @@
 #include "voltdbx/monitor/metrics.hpp"
 #include "voltdbx/pubsub/broker.hpp"
 #include "voltdbx/storage/batch_ops.hpp"
+#include "voltdbx/storage/counter_store.hpp"
 #include "voltdbx/storage.hpp"
 
 #include <functional>
@@ -26,6 +27,7 @@ private:
 
     StorageEngine& storage_;
     BatchOperations batch_;
+    CounterStore counters_;
     pubsub::PubSubBroker& broker_;
     monitor::MetricsCollector& metrics_;
     std::unordered_map<CommandType, Handler> handlers_;
