@@ -29,6 +29,9 @@ CommandType command_type_from_name(std::string_view name) {
     if (key == "INFO") return CommandType::Info;
     if (key == "MGET") return CommandType::Mget;
     if (key == "MSET") return CommandType::Mset;
+    if (key == "INCR") return CommandType::Incr;
+    if (key == "DECR") return CommandType::Decr;
+    if (key == "INCRBY") return CommandType::Incrby;
     return CommandType::Unknown;
 }
 
