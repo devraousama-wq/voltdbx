@@ -4,6 +4,7 @@
 #include "voltdbx/memory/string_pool.hpp"
 #include "voltdbx/storage/entry.hpp"
 #include "voltdbx/storage/hash_table.hpp"
+#include "voltdbx/storage/key_scanner.hpp"
 
 namespace voltdbx {
 
@@ -98,6 +99,12 @@ void StorageEngine::purge_expired() {
     for (const auto& key : expired) {
         impl_->table.erase(key);
     }
+}
+
+ScanPage StorageEngine::scan_keys(ScanCursor cursor, std::size_t count,
+                                  const std::string& pattern) const {
+    KeyScanner scanner(impl_->table);
+    return scanner.scan(cursor, count, pattern);
 }
 
 std::vector<std::pair<std::string, std::string>> StorageEngine::dump_entries() const {
