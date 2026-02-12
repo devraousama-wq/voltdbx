@@ -44,6 +44,7 @@ set(VOLTDBX_SOURCES
     src/protocol/dispatcher.cpp
     src/protocol/batch_handler.cpp
     src/protocol/counter_handler.cpp
+    src/protocol/scan_handler.cpp
     src/protocol/response.cpp
 )
 

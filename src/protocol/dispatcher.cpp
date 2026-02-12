@@ -1,6 +1,7 @@
 #include "voltdbx/protocol/dispatcher.hpp"
 #include "voltdbx/protocol/batch_handler.hpp"
 #include "voltdbx/protocol/counter_handler.hpp"
+#include "voltdbx/protocol/scan_handler.hpp"
 #include "voltdbx/protocol/response.hpp"
 
 #include <chrono>
@@ -93,6 +94,9 @@ void CommandDispatcher::register_builtin_handlers() {
     };
     handlers_[CommandType::Incrby] = [this](const ParsedCommand& cmd) {
         return handle_incrby(cmd, counters_);
+    };
+    handlers_[CommandType::Scan] = [this](const ParsedCommand& cmd) {
+        return handle_scan(cmd, storage_);
     };
     handlers_[CommandType::Set] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() < 2) {
