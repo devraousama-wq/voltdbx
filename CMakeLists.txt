@@ -23,6 +23,7 @@ set(VOLTDBX_SOURCES
     src/storage/hash_table.cpp
     src/storage/batch_ops.cpp
     src/storage/counter_store.cpp
+    src/storage/key_scanner.cpp
     src/memory/buffer_pool.cpp
     src/memory/string_pool.cpp
     src/memory/arena_allocator.cpp

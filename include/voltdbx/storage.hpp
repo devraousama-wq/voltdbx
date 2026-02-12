@@ -1,5 +1,7 @@
 #pragma once
 
+#include "voltdbx/storage/key_scanner.hpp"
+
 #include <chrono>
 #include <memory>
 #include <optional>
@@ -29,6 +31,7 @@ public:
     void touch(std::string_view key);
     std::size_t ttl_key_count() const;
     void purge_expired();
+    ScanPage scan_keys(ScanCursor cursor, std::size_t count, const std::string& pattern) const;
 
 private:
     class Impl;
