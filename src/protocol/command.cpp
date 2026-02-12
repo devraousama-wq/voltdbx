@@ -32,6 +32,7 @@ CommandType command_type_from_name(std::string_view name) {
     if (key == "INCR") return CommandType::Incr;
     if (key == "DECR") return CommandType::Decr;
     if (key == "INCRBY") return CommandType::Incrby;
+    if (key == "SCAN") return CommandType::Scan;
     return CommandType::Unknown;
 }
 

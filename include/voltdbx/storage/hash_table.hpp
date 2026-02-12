@@ -26,6 +26,9 @@ public:
     template <typename Fn>
     void for_each(Fn&& fn) const;
 
+    template <typename Fn>
+    void for_each_bucket(std::size_t bucket_index, Fn&& fn) const;
+
 private:
     std::size_t bucket_index(std::string_view key) const;
     static std::size_t hash_key(std::string_view key);
@@ -49,6 +52,20 @@ void HashTable::for_each(Fn&& fn) const {
             fn(current->key, current->entry);
             current = current->next;
         }
+    }
+}
+
+template <typename Fn>
+void HashTable::for_each_bucket(std::size_t bucket_index, Fn&& fn) const {
+    if (bucket_index >= buckets_.size()) {
+        return;
+    }
+    Node* current = buckets_[bucket_index];
+    std::uint64_t index = 0;
+    while (current) {
+        fn(current->key, index);
+        current = current->next;
+        ++index;
     }
 }
 
