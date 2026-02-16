@@ -6,6 +6,7 @@
 #include "voltdbx/pubsub/broker.hpp"
 #include "voltdbx/monitor/metrics.hpp"
 #include "voltdbx/pubsub/channel_registry.hpp"
+#include "voltdbx/security/auth_gate.hpp"
 #include "voltdbx/storage.hpp"
 
 #include <memory>
@@ -24,6 +25,7 @@ private:
     pubsub::ChannelRegistry channels_;
     pubsub::PubSubBroker broker_;
     monitor::MetricsCollector metrics_;
+    security::AuthGate auth_;
     std::unique_ptr<CommandDispatcher> dispatcher_;
 };
 

@@ -29,6 +29,7 @@ ServerConfig load_config_from_env() {
         cfg.max_clients = static_cast<std::size_t>(std::atol(maxc));
     }
     cfg.data_dir = env_or("VOLTDBX_DATA_DIR", cfg.data_dir.c_str());
+    cfg.requirepass = env_or("VOLTDBX_REQUIREPASS", "");
     const char* snap = std::getenv("VOLTDBX_SNAPSHOT_INTERVAL_SEC");
     if (snap) {
         cfg.snapshot_interval_sec = static_cast<std::uint32_t>(std::atoi(snap));
