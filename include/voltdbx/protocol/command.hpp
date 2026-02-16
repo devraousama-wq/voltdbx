@@ -22,7 +22,8 @@ enum class CommandType {
     Incr,
     Decr,
     Incrby,
-    Scan
+    Scan,
+    Auth
 };
 
 struct ParsedCommand {
