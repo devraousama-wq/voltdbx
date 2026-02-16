@@ -1,4 +1,5 @@
 #include "voltdbx/protocol/dispatcher.hpp"
+#include "voltdbx/protocol/auth_handler.hpp"
 #include "voltdbx/protocol/batch_handler.hpp"
 #include "voltdbx/protocol/counter_handler.hpp"
 #include "voltdbx/protocol/scan_handler.hpp"
@@ -9,8 +10,9 @@
 namespace voltdbx {
 
 CommandDispatcher::CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker,
-                                     monitor::MetricsCollector& metrics)
-    : storage_(storage), batch_(storage), counters_(storage), broker_(broker), metrics_(metrics) {
+                                     monitor::MetricsCollector& metrics, security::AuthGate& auth)
+    : storage_(storage), batch_(storage), counters_(storage), broker_(broker), metrics_(metrics),
+      auth_(auth) {
     register_builtin_handlers();
 }
 
@@ -97,6 +99,9 @@ void CommandDispatcher::register_builtin_handlers() {
     };
     handlers_[CommandType::Scan] = [this](const ParsedCommand& cmd) {
         return handle_scan(cmd, storage_);
+    };
+    handlers_[CommandType::Auth] = [this](const ParsedCommand& cmd) {
+        return handle_auth(cmd, auth_);
     };
     handlers_[CommandType::Set] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() < 2) {

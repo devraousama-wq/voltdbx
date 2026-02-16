@@ -39,9 +39,12 @@ set(VOLTDBX_SOURCES
     src/concurrency/thread_pool.cpp
     src/concurrency/session_worker.cpp
     src/monitor/metrics.cpp
+    src/security/auth_gate.cpp
+    src/security/session_auth.cpp
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
+    src/protocol/auth_handler.cpp
     src/protocol/batch_handler.cpp
     src/protocol/counter_handler.cpp
     src/protocol/scan_handler.cpp

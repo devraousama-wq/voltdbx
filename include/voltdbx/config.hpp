@@ -11,6 +11,7 @@ struct ServerConfig {
     std::size_t max_clients = 1024;
     std::string data_dir = "./data";
     std::uint32_t snapshot_interval_sec = 300;
+    std::string requirepass;
 };
 
 ServerConfig load_config_from_env();
