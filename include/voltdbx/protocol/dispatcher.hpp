@@ -1,5 +1,6 @@
 #pragma once
 
+#include "voltdbx/config/runtime_config.hpp"
 #include "voltdbx/protocol/command.hpp"
 #include "voltdbx/monitor/metrics.hpp"
 #include "voltdbx/pubsub/broker.hpp"
@@ -19,7 +20,8 @@ public:
     using Handler = std::function<std::string(const ParsedCommand&)>;
 
     CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker,
-                        monitor::MetricsCollector& metrics, security::AuthGate& auth);
+                        monitor::MetricsCollector& metrics, security::AuthGate& auth,
+                        RuntimeConfig& runtime);
 
     std::string dispatch(const ParsedCommand& cmd);
 
@@ -32,6 +34,7 @@ private:
     pubsub::PubSubBroker& broker_;
     monitor::MetricsCollector& metrics_;
     security::AuthGate& auth_;
+    RuntimeConfig& runtime_;
     std::unordered_map<CommandType, Handler> handlers_;
 };
 

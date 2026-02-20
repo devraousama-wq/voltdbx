@@ -10,6 +10,7 @@ option(VOLTDBX_BUILD_TESTS "Build unit tests" ON)
 set(VOLTDBX_SOURCES
     src/main.cpp
     src/config.cpp
+    src/config/runtime_config.cpp
     src/server/database_server.cpp
     src/server/command_handler.cpp
     src/net/tcp_server.cpp
@@ -46,6 +47,7 @@ set(VOLTDBX_SOURCES
     src/protocol/dispatcher.cpp
     src/protocol/auth_handler.cpp
     src/protocol/batch_handler.cpp
+    src/protocol/config_handler.cpp
     src/protocol/counter_handler.cpp
     src/protocol/scan_handler.cpp
     src/protocol/response.cpp
