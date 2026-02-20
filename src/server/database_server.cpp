@@ -18,7 +18,8 @@ DatabaseServer::DatabaseServer(ServerConfig config)
       aof_(config_.data_dir),
       broker_(channels_),
       auth_(config_.requirepass),
-      dispatcher_(std::make_unique<CommandDispatcher>(storage_, broker_, metrics_, auth_)) {}
+      runtime_(config_),
+      dispatcher_(std::make_unique<CommandDispatcher>(storage_, broker_, metrics_, auth_, runtime_)) {}
 
 int DatabaseServer::run() {
     net::TcpServer tcp(config_.host, config_.port);

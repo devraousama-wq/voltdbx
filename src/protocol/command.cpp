@@ -34,6 +34,7 @@ CommandType command_type_from_name(std::string_view name) {
     if (key == "INCRBY") return CommandType::Incrby;
     if (key == "SCAN") return CommandType::Scan;
     if (key == "AUTH") return CommandType::Auth;
+    if (key == "CONFIG") return CommandType::Config;
     return CommandType::Unknown;
 }
 
