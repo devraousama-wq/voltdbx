@@ -22,6 +22,7 @@ public:
     std::size_t bucket_count() const { return buckets_.size(); }
 
     void rehash_if_needed();
+    void clear();
 
     template <typename Fn>
     void for_each(Fn&& fn) const;

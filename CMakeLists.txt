@@ -48,6 +48,7 @@ set(VOLTDBX_SOURCES
     src/protocol/auth_handler.cpp
     src/protocol/batch_handler.cpp
     src/protocol/config_handler.cpp
+    src/protocol/flush_handler.cpp
     src/protocol/counter_handler.cpp
     src/protocol/scan_handler.cpp
     src/protocol/response.cpp

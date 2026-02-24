@@ -107,6 +107,11 @@ ScanPage StorageEngine::scan_keys(ScanCursor cursor, std::size_t count,
     return scanner.scan(cursor, count, pattern);
 }
 
+void StorageEngine::clear_all() {
+    impl_->table.clear();
+    impl_->arena.reset();
+}
+
 std::vector<std::pair<std::string, std::string>> StorageEngine::dump_entries() const {
     std::vector<std::pair<std::string, std::string>> pairs;
     impl_->table.for_each([&pairs](const std::string& key, const StorageEntry& entry) {
