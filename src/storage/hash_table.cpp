@@ -92,4 +92,16 @@ void HashTable::rehash_if_needed() {
     }
 }
 
+void HashTable::clear() {
+    for (Node* head : buckets_) {
+        while (head) {
+            Node* next = head->next;
+            delete head;
+            head = next;
+        }
+    }
+    std::fill(buckets_.begin(), buckets_.end(), nullptr);
+    size_ = 0;
+}
+
 }

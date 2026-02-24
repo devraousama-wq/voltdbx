@@ -24,7 +24,9 @@ enum class CommandType {
     Incrby,
     Scan,
     Auth,
-    Config
+    Config,
+    Flushdb,
+    Dbsize
 };
 
 struct ParsedCommand {
