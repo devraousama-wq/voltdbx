@@ -32,6 +32,7 @@ public:
     std::size_t ttl_key_count() const;
     void purge_expired();
     ScanPage scan_keys(ScanCursor cursor, std::size_t count, const std::string& pattern) const;
+    void clear_all();
 
 private:
     class Impl;

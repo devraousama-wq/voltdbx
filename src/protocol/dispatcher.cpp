@@ -2,6 +2,7 @@
 #include "voltdbx/protocol/auth_handler.hpp"
 #include "voltdbx/protocol/batch_handler.hpp"
 #include "voltdbx/protocol/config_handler.hpp"
+#include "voltdbx/protocol/flush_handler.hpp"
 #include "voltdbx/protocol/counter_handler.hpp"
 #include "voltdbx/protocol/scan_handler.hpp"
 #include "voltdbx/protocol/response.hpp"
@@ -107,6 +108,12 @@ void CommandDispatcher::register_builtin_handlers() {
     };
     handlers_[CommandType::Config] = [this](const ParsedCommand& cmd) {
         return handle_config(cmd, runtime_);
+    };
+    handlers_[CommandType::Flushdb] = [this](const ParsedCommand&) {
+        return handle_flushdb(storage_);
+    };
+    handlers_[CommandType::Dbsize] = [this](const ParsedCommand&) {
+        return handle_dbsize(storage_);
     };
     handlers_[CommandType::Set] = [this](const ParsedCommand& cmd) {
         if (cmd.args.size() < 2) {
