@@ -45,6 +45,7 @@ set(VOLTDBX_SOURCES
     src/protocol/parser.cpp
     src/protocol/command.cpp
     src/protocol/dispatcher.cpp
+    src/protocol/aof_handler.cpp
     src/protocol/auth_handler.cpp
     src/protocol/batch_handler.cpp
     src/protocol/config_handler.cpp

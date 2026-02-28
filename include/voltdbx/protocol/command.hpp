@@ -26,7 +26,8 @@ enum class CommandType {
     Auth,
     Config,
     Flushdb,
-    Dbsize
+    Dbsize,
+    Bgrewriteaof
 };
 
 struct ParsedCommand {

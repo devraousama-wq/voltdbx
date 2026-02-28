@@ -1,6 +1,7 @@
 #pragma once
 
 #include "voltdbx/config/runtime_config.hpp"
+#include "voltdbx/persistence/aof_log.hpp"
 #include "voltdbx/protocol/command.hpp"
 #include "voltdbx/monitor/metrics.hpp"
 #include "voltdbx/pubsub/broker.hpp"
@@ -21,7 +22,7 @@ public:
 
     CommandDispatcher(StorageEngine& storage, pubsub::PubSubBroker& broker,
                         monitor::MetricsCollector& metrics, security::AuthGate& auth,
-                        RuntimeConfig& runtime);
+                        RuntimeConfig& runtime, persistence::AofLog& aof);
 
     std::string dispatch(const ParsedCommand& cmd);
 
@@ -35,6 +36,7 @@ private:
     monitor::MetricsCollector& metrics_;
     security::AuthGate& auth_;
     RuntimeConfig& runtime_;
+    persistence::AofLog& aof_;
     std::unordered_map<CommandType, Handler> handlers_;
 };
 

@@ -37,6 +37,7 @@ CommandType command_type_from_name(std::string_view name) {
     if (key == "CONFIG") return CommandType::Config;
     if (key == "FLUSHDB") return CommandType::Flushdb;
     if (key == "DBSIZE") return CommandType::Dbsize;
+    if (key == "BGREWRITEAOF") return CommandType::Bgrewriteaof;
     return CommandType::Unknown;
 }
 
