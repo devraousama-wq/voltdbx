@@ -60,4 +60,39 @@ void AofLog::flush() {
     }
 }
 
+bool AofLog::rewrite_from(const StorageEngine& storage) {
+    const auto entries = storage.dump_entries();
+    const std::filesystem::path temp_path = log_path_.string() + ".rewrite";
+    {
+        std::ofstream out(temp_path, std::ios::trunc);
+        if (!out) {
+            return false;
+        }
+        out << "AOFREWRITE_V1\n";
+        for (const auto& entry : entries) {
+            out << "SET " << entry.first << " " << entry.second << "\n";
+        }
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (stream_.is_open()) {
+        stream_.close();
+    }
+    std::error_code ec;
+    std::filesystem::remove(log_path_, ec);
+    std::filesystem::rename(temp_path, log_path_, ec);
+    if (ec) {
+        return false;
+    }
+    stream_.open(log_path_, std::ios::app);
+    return true;
+}
+
+std::size_t AofLog::bytes_on_disk() const {
+    std::error_code ec;
+    if (!std::filesystem::exists(log_path_, ec)) {
+        return 0;
+    }
+    return static_cast<std::size_t>(std::filesystem::file_size(log_path_, ec));
+}
+
 }

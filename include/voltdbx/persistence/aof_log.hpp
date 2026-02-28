@@ -16,7 +16,9 @@ public:
     void append_set(std::string_view key, std::string_view value);
     void append_del(std::string_view key);
     bool replay(StorageEngine& storage);
+    bool rewrite_from(const StorageEngine& storage);
     void flush();
+    std::size_t bytes_on_disk() const;
 
 private:
     void write_line(const std::string& line);
